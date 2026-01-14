@@ -1,11 +1,11 @@
 <script lang="ts">
   import '../app.css';
   import { base } from '$app/paths';
-  import { slide } from 'svelte/transition';
+  import { slide, fly } from 'svelte/transition';
   import { onMount } from 'svelte';
 
-  const paypalUsername = "AxelLab427";
-  const donationAmounts = [1, 3, 5, 10];
+  const currentYear = new Date().getFullYear();
+
   let isDropdownOpen = false;
   let currentTheme = 'light';
 
@@ -53,7 +53,7 @@
         </span>
       </a>
 
-      <!-- THEME TOGGLE (ICON FIXED) -->
+      <!-- THEME TOGGLE -->
       <button
         type="button"
         class="theme-toggle-btn shadow-sm"
@@ -76,7 +76,7 @@
             </g>
           </svg>
         {:else}
-          <!-- Crescent Moon -->
+          <!-- Moon -->
           <svg viewBox="0 0 24 24" width="20" height="20">
             <path
               fill="currentColor"
@@ -86,36 +86,78 @@
         {/if}
       </button>
 
+      <!-- BUY ME A COFFEE (File 1 style adapted) -->
       <div class="position-relative" use:clickOutside on:click_outside={closeDropdown}>
-        <button class="btn btn-coffee d-flex align-items-center gap-2" on:click={toggleDropdown}>
-          ☕
-          <span class="d-none d-sm-inline">Buy me a coffee</span>
+        <button
+          class="bmac-button d-flex align-items-center gap-2 text-white border-0 px-4 py-2 rounded-pill shadow-sm"
+          on:click={toggleDropdown}
+          aria-label="Support options"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2,21V19H20V21H2M20,8V5H4V8H20M20,10H4V13C4,14.38 4.5,15.63 5.31,16.58L11.64,19H12.36L18.69,16.58C19.5,15.63 20,14.38 20,13V10M16,2H8V4H16V2Z" />
+          </svg>
+          <span class="d-none d-sm-inline fw-semibold">Buy me a Coffee</span>
         </button>
 
         {#if isDropdownOpen}
-          <div class="dropdown-menu-custom glass p-2 shadow-lg" transition:slide>
-            {#each donationAmounts as amount}
-              <a
-                href="https://paypal.me/{paypalUsername}/{amount}"
-                target="_blank"
-                class="donation-link"
-              >
-                ${amount}
-              </a>
-            {/each}
+          <div
+            class="bmac-dropdown glass mt-2 shadow-lg"
+            transition:fly={{ y: -10, duration: 250 }}
+          >
+            <a
+              href="https://buymeacoffee.com/axelbase"
+              target="_blank"
+              rel="noopener"
+              on:click={closeDropdown}
+            >
+              <span class="amount">$3</span> One Coffee
+            </a>
+            <a
+              href="https://buymeacoffee.com/axelbase"
+              target="_blank"
+              rel="noopener"
+              on:click={closeDropdown}
+            >
+              <span class="amount">$5</span> Two Coffees
+            </a>
+            <a
+              href="https://buymeacoffee.com/axelbase"
+              target="_blank"
+              rel="noopener"
+              on:click={closeDropdown}
+            >
+              <span class="amount">$10</span> Three Coffees
+            </a>
+
+            <a
+              href="https://buymeacoffee.com/axelbase"
+              target="_blank"
+              rel="noopener"
+              on:click={closeDropdown}
+              class="custom-amount"
+            >
+              Custom Amount
+            </a>
+
+            <a
+              href="bitcoin:bc1q3p0e6vt492m4w4fpz5m2cl4zcfuqqkgaj6myc9?label=AxelBase&message=Buy%20me%20a%20coffee"
+              on:click={closeDropdown}
+              class="custom-amount bitcoin-link"
+            >
+              Buy via Crypto (Bitcoin)
+            </a>
           </div>
         {/if}
       </div>
     </div>
 
-    <!-- NAV LINKS (BLOG ADDED) -->
+    <!-- NAV LINKS -->
     <ul class="nav d-none d-lg-flex align-items-center gap-1">
       <li><a class="nav-link-custom" href="{base}/#home">Home</a></li>
       <li><a class="nav-link-custom" href="{base}/#about">About</a></li>
       <li><a class="nav-link-custom" href="{base}/#how-to">How to Use</a></li>
       <li><a class="nav-link-custom" href="{base}/#faq">FAQ</a></li>
       <li><a class="nav-link-custom" href="{base}/blog">Blog</a></li>
-
     </ul>
 
     <button
@@ -134,7 +176,7 @@
 
 <footer class="glass border-top py-4 mt-auto">
   <div class="container d-flex justify-content-between align-items-center small text-muted">
-    <span>&copy; {new Date().getFullYear()} AxelBase</span>
+    <span>© {currentYear} AxelBase</span>
     <div class="d-flex gap-3">
       <a href="{base}/privacy" class="text-decoration-none text-muted">Privacy</a>
       <a href="{base}/terms" class="text-decoration-none text-muted">Terms</a>
@@ -143,6 +185,8 @@
 </footer>
 
 <style>
+  /* ── Keep most of your existing styles from File 2 ── */
+
   .navbar-brand-logo {
     height: 32px;
     transition: transform 0.3s ease;
@@ -164,7 +208,6 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    pointer-events: auto;
   }
 
   .theme-toggle-btn:hover {
@@ -185,37 +228,68 @@
     color: var(--color-accent);
   }
 
-  .btn-coffee {
-    background: #ffdd00;
-    color: #3d3d3d;
-    font-weight: 700;
-    border-radius: 50px;
-    border: none;
-    padding: 0.45rem 1.2rem;
+  /* ── Buy Me a Coffee styles (mostly from File 1) ── */
+  .bmac-button {
+    background: #00a651;           /* green similar to original */
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    color: white !important;
   }
 
-  .dropdown-menu-custom {
+  .bmac-button:hover {
+    background: #008c45;
+    transform: translateY(-1px);
+  }
+
+  .bmac-dropdown {
     position: absolute;
-    top: 125%;
-    left: 0;
-    min-width: 120px;
-    z-index: 1100;
-    border: 1px solid var(--color-accent) !important;
-    border-radius: 12px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 1000;
+    border: 1px solid var(--glass-border);
   }
 
-  .donation-link {
-    display: block;
-    padding: 10px;
-    text-align: center;
-    border-radius: 8px;
+  .bmac-dropdown a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
     color: var(--color-text-main);
-    font-weight: bold;
     text-decoration: none;
+    font-size: 0.98rem;
+    transition: all 0.2s ease;
   }
 
-  .donation-link:hover {
-    background: var(--color-accent);
-    color: white;
+  .bmac-dropdown a:hover {
+    background: rgba(0, 166, 81, 0.12);
+    color: #00a651;
+    padding-left: 28px;
+  }
+
+  .bmac-dropdown .amount {
+    font-weight: 700;
+    color: #00a651;
+    font-size: 1.1rem;
+  }
+
+  .bmac-dropdown .custom-amount {
+    font-weight: 600;
+    color: #00a651;
+    border-top: 1px solid rgba(128,128,128,0.15);
+    justify-content: center !important;
+  }
+
+  .bitcoin-link {
+    color: #f7931a !important;
+    font-weight: 600;
+  }
+
+  .bitcoin-link:hover {
+    background: rgba(247, 147, 26, 0.12) !important;
+    color: #f7931a !important;
   }
 </style>
